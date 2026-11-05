@@ -1,0 +1,15 @@
+{
+  "name": "tabmoor",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "build": "node scripts/build.mjs",
+    "test:geometry": "node --test --test-concurrency=1 test/geometry-browser.manual.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.1",
+    "puppeteer-core": "^24.15.0"
+  }
+}

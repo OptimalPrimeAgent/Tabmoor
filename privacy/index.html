@@ -18,92 +18,111 @@
 </style>
 </head>
 <body>
+<!-- DRAFT: Patrick must approve this privacy text before it is published. -->
 <nav><a href="#da">Dansk</a><a href="#en">English</a></nav>
 
 <section id="da" lang="da">
   <h1>Privatlivspolitik for Tabmoor</h1>
-  <p class="muted">Senest opdateret: 2. november 2026. Gælder for browserudvidelsen Tabmoor til Chrome og Firefox.</p>
+  <p class="muted">Senest opdateret: 5. november 2026. Udkast, ikke godkendt til offentliggørelse. Gælder for browserudvidelsen Tabmoor til Chrome, Microsoft Edge og Firefox.</p>
   <p><strong>Udgiver:</strong> Patrick Thams-Dimon. Kontakt: thamsdimon@gmail.com</p>
-  <div class="box"><strong>Kort sagt:</strong> Tabmoor gemmer dine faner lokalt på din egen enhed. Vi modtager ingen data, sender intet over nettet og bruger ingen sporing.</div>
+  <div class="box"><strong>Kort sagt:</strong> Tabmoor gemmer dine faner lokalt på din egen enhed. Udgiveren modtager ikke dine faner. Det eneste netværkskald er valgfrit og sker kun, hvis du selv aktiverer eller deaktiverer Pro hos Lemon Squeezy. Ingen sporing.</div>
 
   <h2>1. Hvilke data udvidelsen håndterer</h2>
   <p>For at kunne gemme og gendanne sessioner læser Tabmoor adresse (URL), sidetitel, fastgjort-status og fanegruppe (navn og farve) for fanerne i dine almindelige vinduer, samt vinduernes størrelse og placering. Det er browseraktivitet (webhistorik) i Chrome Web Stores forstand. Private vinduer læses aldrig.</p>
 
   <h2>2. Hvor data opbevares</h2>
-  <p>Sessioner, backups og indstillinger gemmes kun i browserens lokale lager (storage.local og storage.session) på din enhed. Data sendes ikke til udgiveren eller nogen anden. Udvidelsen har ingen server og foretager ingen netværkskald.</p>
+  <p>Sessioner, backups og indstillinger gemmes kun i browserens lokale lager (storage.local og storage.session) på din enhed. Fanedata sendes ikke til udgiveren eller nogen anden. Udvidelsen har ingen server. Det eneste netværkskald er valgfrit og sker kun, når du selv aktiverer eller deaktiverer Tabmoor Pro, som beskrevet i afsnit 3. Der er ingen analyse og ingen andre netværkskald.</p>
 
-  <h2>3. Formål</h2>
-  <p>Data bruges udelukkende til udvidelsens ene formål: at gemme, sikkerhedskopiere og gendanne dine browserfaner, når du beder om det, eller automatisk som backup.</p>
+  <h2>3. Pro og Lemon Squeezy</h2>
+  <p>Køb af Tabmoor Pro sker hos Lemon Squeezy, som er merchant of record. Lemon Squeezy sælger licensen, opkræver betalingen og afregner moms. Deres privatlivspolitik gælder for betalingen. Tabmoor ser ikke kortoplysninger eller andre betalingsdata.</p>
+  <p>Pro er et engangskøb. Når du indsætter en licensnøgle og klikker Aktivér, beder browseren om tilladelse til <code>https://api.lemonsqueezy.com/*</code>. Giver du ikke tilladelsen, sendes intet, og Pro slås ikke til.</p>
+  <p>Giver du tilladelsen, sender Tabmoor ét kald med licensnøglen og et instansnavn som "Tabmoor on Chrome", "Tabmoor on Edge" eller "Tabmoor on Firefox". Der sendes ikke et enheds-fingeraftryk, ikke dit navn og ikke din e-mail. Selve forbindelsen viser din IP-adresse for Lemon Squeezy, sådan som ethvert HTTPS-kald gør. Starter du fra den lille popup, åbnes en fane, fordi browserens tilladelsesdialog ellers lukker popuppen. Nøglen ligger da kun midlertidigt i storage.session, indtil du aktiverer i fanen, og browseren sletter det lager, når den lukkes.</p>
+  <p>Svaret fra Lemon Squeezy kan indeholde kundens navn og e-mail. Tabmoor kasserer de oplysninger med det samme og gemmer dem ikke. Lokalt gemmes kun licensnøgle, instans-id, aktiveringstidspunkt og at Pro er slået til. Derefter virker Pro uden net. Der er ingen periodisk validering.</p>
+  <p>Deaktivér sender ét kald med licensnøgle og instans-id, så aktiveringspladsen frigives, og sletter derefter licensdataene på denne browser. Afinstallation sletter også browserens lokale data for udvidelsen.</p>
+  <p>Formål og grundlag: at opfylde købet. Sletning: deaktivér i udvidelsen, eller afinstallér den.</p>
 
-  <h2>4. Deling, salg og annoncer</h2>
-  <p>Ingen data deles, sælges eller overføres. Der er ingen annoncer, ingen analyseværktøjer, ingen cookies og ingen konto.</p>
+  <h2>4. Formål</h2>
+  <p>Fanedata bruges udelukkende til udvidelsens ene formål: at gemme, sikkerhedskopiere og gendanne dine browserfaner, når du beder om det, eller automatisk som backup. Licensnøglen bruges kun til at låse Pro op på den browser, hvor du aktiverer den.</p>
 
-  <h2>5. Opbevaringstid og sletning</h2>
-  <p>Gemte sessioner bliver, indtil du sletter dem. Automatiske backups roterer, så kun de seneste 10 beholdes. Afinstallerer du udvidelsen, sletter browseren alle dens data.</p>
+  <h2>5. Deling, salg og annoncer</h2>
+  <p>Fanedata deles ikke, sælges ikke og overføres ikke. Der er ingen annoncer, ingen analyseværktøjer, ingen cookies og ingen konto. Den eneste overførsel er den valgfrie aktivering eller deaktivering i afsnit 3, og den indeholder ikke fanedata.</p>
 
-  <h2>6. Eksport</h2>
-  <p>Hvis du selv eksporterer, gemmes en JSON-fil på din computer. Du bestemmer, hvad der sker med filen.</p>
+  <h2>6. Opbevaringstid og sletning</h2>
+  <p>Gemte sessioner bliver, indtil du sletter dem. I gratisversionen roterer automatiske backups, så kun de seneste 10 beholdes. Med Pro beholdes de seneste 50, og derudover én backup pr. dag i 30 dage. Afinstallerer du udvidelsen, sletter browseren alle dens data, inklusive en eventuel licensnøgle.</p>
 
-  <h2>7. Tilladelser</h2>
+  <h2>7. Eksport</h2>
+  <p>Hvis du selv eksporterer, gemmes en JSON-fil på din computer. Du bestemmer, hvad der sker med filen. Licensnøglen er ikke en del af eksporten.</p>
+
+  <h2>8. Tilladelser</h2>
   <ul>
     <li><strong>tabs:</strong> læse adresser og titler på åbne faner og åbne dem igen.</li>
     <li><strong>tabGroups:</strong> gemme og genskabe fanegruppers navn og farve.</li>
     <li><strong>storage, unlimitedStorage:</strong> gemme sessioner og backups lokalt.</li>
     <li><strong>alarms:</strong> planlægge den automatiske backup.</li>
+    <li><strong>Valgfri værtsadgang til https://api.lemonsqueezy.com/*:</strong> bruges kun, hvis du klikker Aktivér eller Deaktivér. Browseren spørger selv. Afslår du, sker der intet.</li>
   </ul>
 
-  <h2>8. Chrome Web Store: begrænset brug</h2>
+  <h2>9. Chrome Web Store: begrænset brug</h2>
   <p>Tabmoors brug af oplysninger følger Chrome Web Stores politik for brugerdata (Chrome Web Store User Data Policy), herunder kravene om begrænset brug (Limited Use).</p>
 
-  <h2>9. Ændringer</h2>
-  <p>Ændres politikken, opdateres datoen øverst. Hvis en fremtidig betalt version kræver behandling af data (fx betaling via en betalingsudbyder), beskrives det her, før den lanceres.</p>
+  <h2>10. Ændringer</h2>
+  <p>Ændres politikken, opdateres datoen øverst. Denne udgave beskriver Pro-købet, før det udgives. Teksten må ikke lægges offentligt ud, før Patrick har godkendt den.</p>
 
-  <h2>10. Kontakt og dine rettigheder</h2>
-  <p>Spørgsmål kan sendes til thamsdimon@gmail.com. Da udgiveren ikke modtager eller opbevarer dine data, ligger alle data hos dig og kan slettes direkte i udvidelsen. Du kan klage til Datatilsynet (datatilsynet.dk).</p>
+  <h2>11. Kontakt og dine rettigheder</h2>
+  <p>Spørgsmål kan sendes til thamsdimon@gmail.com. Fanedata ligger hos dig og kan slettes direkte i udvidelsen. Du kan klage til Datatilsynet (datatilsynet.dk).</p>
 </section>
 
 <hr>
 
 <section id="en" lang="en">
   <h1>Tabmoor Privacy Policy</h1>
-  <p class="muted">Last updated: November 2, 2026. Applies to the Tabmoor browser extension for Chrome and Firefox.</p>
+  <p class="muted">Last updated: November 5, 2026. Draft, not approved for publication. Applies to the Tabmoor browser extension for Chrome, Microsoft Edge and Firefox.</p>
   <p><strong>Publisher:</strong> Patrick Thams-Dimon. Contact: thamsdimon@gmail.com</p>
-  <div class="box"><strong>In short:</strong> Tabmoor stores your tabs locally on your own device. We receive no data, nothing is sent over the network and there is no tracking.</div>
+  <div class="box"><strong>In short:</strong> Tabmoor stores your tabs locally on your own device. The publisher does not receive your tabs. The only network request is optional and happens only if you activate or deactivate Pro with Lemon Squeezy. There is no tracking.</div>
 
   <h2>1. Data the extension handles</h2>
   <p>To save and restore sessions, Tabmoor reads the URL, page title, pinned state and tab group (name and colour) of tabs in your normal windows, plus window size and position. This is web browsing activity (web history) as defined by the Chrome Web Store. Private windows are never read.</p>
 
   <h2>2. Where data is stored</h2>
-  <p>Sessions, backups and settings are stored only in the browser's local storage (storage.local and storage.session) on your device. Data is never sent to the publisher or anyone else. The extension has no server and makes no network requests.</p>
+  <p>Sessions, backups and settings are stored only in the browser's local storage (storage.local and storage.session) on your device. Tab data is never sent to the publisher or anyone else. The extension has no server. The only network request is optional and happens only when you activate or deactivate Tabmoor Pro, as described in section 3. There is no analytics and no other network request.</p>
 
-  <h2>3. Purpose</h2>
-  <p>Data is used only for the extension's single purpose: saving, backing up and restoring your browser tabs, on request or automatically as a backup.</p>
+  <h2>3. Pro and Lemon Squeezy</h2>
+  <p>Tabmoor Pro is bought from Lemon Squeezy, who is the merchant of record. Lemon Squeezy sells the license, takes the payment and handles tax. Their privacy policy covers the payment. Tabmoor does not see card details or other payment data.</p>
+  <p>Pro is a one-time purchase. When you paste a license key and click Activate, the browser asks for permission to <code>https://api.lemonsqueezy.com/*</code>. If you refuse, nothing is sent and Pro stays off.</p>
+  <p>If you allow it, Tabmoor makes one call with the license key and an instance name such as "Tabmoor on Chrome", "Tabmoor on Edge" or "Tabmoor on Firefox". It does not send a device fingerprint, your name or your email. The connection does reveal your IP address to Lemon Squeezy, as any HTTPS request does. Starting from the small popup opens a tab, because the browser's permission dialog would otherwise close the popup. The key then sits only briefly in storage.session until you activate in that tab, and the browser deletes that storage when it quits.</p>
+  <p>The Lemon Squeezy response can include the customer's name and email. Tabmoor discards those immediately and does not store them. Stored locally are only the license key, the instance id, the activation time and that Pro is on. After that, Pro works offline. There is no periodic revalidation.</p>
+  <p>Deactivate makes one call with the license key and instance id, so the activation slot is freed, and then deletes the license data on this browser. Uninstalling also deletes the browser's local data for the extension.</p>
+  <p>Purpose and basis: performing the purchase. Deletion: deactivate in the extension, or uninstall it.</p>
 
-  <h2>4. Sharing, sale and ads</h2>
-  <p>No data is shared, sold or transferred. There are no ads, no analytics, no cookies and no account.</p>
+  <h2>4. Purpose</h2>
+  <p>Tab data is used only for the extension's single purpose: saving, backing up and restoring your browser tabs, on request or automatically as a backup. The license key is used only to unlock Pro on the browser where you activate it.</p>
 
-  <h2>5. Retention and deletion</h2>
-  <p>Saved sessions are kept until you delete them. Automatic backups rotate, keeping only the latest 10. Uninstalling the extension makes the browser delete all of its data.</p>
+  <h2>5. Sharing, sale and ads</h2>
+  <p>Tab data is not shared, sold or transferred. There are no ads, no analytics, no cookies and no account. The only transfer is the optional activation or deactivation in section 3, and it does not include tab data.</p>
 
-  <h2>6. Export</h2>
-  <p>If you export, a JSON file is saved on your computer and stays under your control.</p>
+  <h2>6. Retention and deletion</h2>
+  <p>Saved sessions are kept until you delete them. On the free version, automatic backups rotate so only the latest 10 are kept. Pro keeps the latest 50, plus one backup per day for 30 days. Uninstalling the extension makes the browser delete all of its data, including a license key if one was stored.</p>
 
-  <h2>7. Permissions</h2>
+  <h2>7. Export</h2>
+  <p>If you export, a JSON file is saved on your computer and stays under your control. The license key is not part of the export.</p>
+
+  <h2>8. Permissions</h2>
   <ul>
     <li><strong>tabs:</strong> read URLs and titles of open tabs and reopen them.</li>
     <li><strong>tabGroups:</strong> save and recreate tab group names and colours.</li>
     <li><strong>storage, unlimitedStorage:</strong> store sessions and backups locally.</li>
     <li><strong>alarms:</strong> schedule the automatic backup.</li>
+    <li><strong>Optional host access to https://api.lemonsqueezy.com/*:</strong> used only if you click Activate or Deactivate. The browser asks. If you refuse, nothing happens.</li>
   </ul>
 
-  <h2>8. Chrome Web Store Limited Use</h2>
+  <h2>9. Chrome Web Store Limited Use</h2>
   <p>The use of information received by Tabmoor adheres to the Chrome Web Store User Data Policy, including the Limited Use requirements.</p>
 
-  <h2>9. Changes</h2>
-  <p>Changes update the date above. If a future paid version needs any data processing (for example payment through a payment provider), it will be described here before launch.</p>
+  <h2>10. Changes</h2>
+  <p>Changes update the date above. This version describes the Pro purchase before it is released. The text must not be published until Patrick has approved it.</p>
 
-  <h2>10. Contact and your rights</h2>
-  <p>Questions: thamsdimon@gmail.com. Because the publisher never receives or stores your data, all data stays with you and can be deleted directly in the extension. You may lodge a complaint with your data protection authority (in Denmark: Datatilsynet).</p>
+  <h2>11. Contact and your rights</h2>
+  <p>Questions: thamsdimon@gmail.com. Tab data stays with you and can be deleted directly in the extension. You may lodge a complaint with your data protection authority (in Denmark: Datatilsynet).</p>
 </section>
 </body>
 </html>
