@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "Tabmoor: gem faner og automatisk backup"
+  },
+  "extDescription": {
+    "message": "Gem alle åbne faner som navngivne sessioner, gendan dem med ét klik og få automatiske lokale backups. Ingen sporing."
+  },
+  "cmdSave": {
+    "message": "Gem alle vinduer som en session"
+  }
+}

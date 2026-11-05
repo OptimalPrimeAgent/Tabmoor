@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tabmoor</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<header>
+  <img src="icons/icon32.png" alt="" width="20" height="20">
+  <h1 data-t="title">Tabmoor</h1>
+  <button id="openTab" class="link" type="button" data-t="openTab"></button>
+</header>
+<section class="save">
+  <input id="name" type="text" maxlength="120" data-ph="namePh" autocomplete="off">
+  <div class="row">
+    <button id="saveAll" class="primary" type="button" data-t="saveAll"></button>
+    <button id="saveWin" type="button" data-t="saveWin"></button>
+  </div>
+</section>
+<nav class="tabs" role="tablist">
+  <button id="tabSessions" role="tab" class="active" type="button" data-t="sessions"></button>
+  <button id="tabBackups" role="tab" type="button" data-t="backups"></button>
+  <button id="tabSettings" role="tab" type="button" data-t="settings"></button>
+</nav>
+<main>
+  <div id="paneSessions">
+    <div id="filters" class="filters row" hidden>
+      <select id="folderFilter"></select>
+      <button id="tagClear" type="button" hidden></button>
+    </div>
+    <input id="search" type="search" data-ph="searchPh" autocomplete="off">
+    <ul id="sessionList" class="list"></ul>
+  </div>
+  <div id="paneBackups" hidden>
+    <div class="row"><button id="backupNow" type="button" data-t="backupNow"></button><span id="keep" class="muted"></span></div>
+    <ul id="backupList" class="list"></ul>
+  </div>
+  <div id="paneSettings" hidden>
+    <label class="field"><span data-t="language"></span>
+      <select id="lang"><option value="auto" data-t="langAuto"></option><option value="da">Dansk</option><option value="en">English</option></select>
+    </label>
+    <label class="field"><span data-t="interval"></span>
+      <select id="interval"><option>1</option><option>2</option><option>5</option><option>10</option><option>15</option><option>30</option></select>
+    </label>
+    <div class="row">
+      <button id="exportBtn" type="button" data-t="exportBtn"></button>
+      <button id="importBtn" type="button" data-t="importBtn"></button>
+      <input id="importFile" type="file" accept=".json,application/json" hidden>
+    </div>
+    <div class="pro" id="proBox"></div>
+    <p class="muted" data-t="privacy"></p>
+  </div>
+</main>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="core.js"></script>
+<script src="i18n.js"></script>
+<script src="license-config.js"></script>
+<script src="license.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>
