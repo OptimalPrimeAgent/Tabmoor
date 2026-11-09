@@ -32,9 +32,15 @@
     await api.storage.local.set({ settings: s });
     return s;
   }
-  async function limits() {
+  async function isPro() {
+    try {
+      if (g.TSUnlock && typeof g.TSUnlock.isUnlocked === 'function') return !!(await g.TSUnlock.isUnlocked());
+    } catch (e) { /* use the stored flag if verification throws */ }
     const s = await getSettings();
-    return s.pro ? LIMITS.pro : LIMITS.free;
+    return !!s.pro;
+  }
+  async function limits() {
+    return (await isPro()) ? LIMITS.pro : LIMITS.free;
   }
 
   /** Capture open normal, non-incognito windows. windowId limits to one window. */
@@ -203,8 +209,7 @@
 
   /** Tags and folders are Pro-only edits. Returns false when Pro is off. */
   async function updateSession(id, patch) {
-    const settings = await getSettings();
-    if (!settings.pro) return false;
+    if (!(await isPro())) return false;
     const sessions = await listSessions();
     const s = sessions.find(x => x.id === id);
     if (!s || !patch || typeof patch !== 'object') return false;
@@ -230,14 +235,14 @@
     if (backups[0] && backups[0].fp === fp) return null;
     const b = { id: uid(), created: Date.now(), reason: reason || 'auto', fp, windows };
     backups.unshift(b);
-    const pro = !!(await getSettings()).pro;
+    const pro = await isPro();
     const kept = applyRetention(backups, { pro, now: Date.now() });
     await api.storage.local.set({ backups: kept });
     return b;
   }
 
   async function enforceBackupLimit(now) {
-    const pro = !!(await getSettings()).pro;
+    const pro = await isPro();
     const kept = applyRetention(await listBackups(), { pro, now: Number.isFinite(now) ? now : Date.now() });
     await api.storage.local.set({ backups: kept });
     return kept;
@@ -266,7 +271,7 @@
   /** Restore windows. Returns {windows, tabs, failed, groups}. Pro may pass {lazy:true}. */
   async function restore(windows, opts) {
     const res = { windows: 0, tabs: 0, failed: 0, groups: 0 };
-    const lazy = !!(opts && opts.lazy) && !!(await getSettings()).pro;
+    const lazy = !!(opts && opts.lazy) && await isPro();
     const firefox = isFirefox();
     for (const w of windows || []) {
       const created = await createWindow(w);
@@ -399,7 +404,7 @@
 
   g.TS = {
     api, uid, savableUrl, snapshot, countTabs, fingerprint,
-    getSettings, setSettings, limits, LIMITS, DAILY_DAYS,
+    getSettings, setSettings, isPro, limits, LIMITS, DAILY_DAYS,
     dayKey, daysAgo, applyRetention, enforceBackupLimit, isFirefox,
     listSessions, saveSession, renameSession, deleteSession, updateSession,
     cleanTags, cleanFolder,

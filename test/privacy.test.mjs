@@ -4,15 +4,24 @@ import path from 'node:path';
 import test from 'node:test';
 import { rootDir } from './harness.mjs';
 
-test('privacy draft discloses the optional Lemon Squeezy call and nothing else', () => {
+test('privacy draft describes Stripe and the Cloudflare unlock server', () => {
   const html = fs.readFileSync(path.join(rootDir, 'privacy/index.html'), 'utf8');
-  assert.match(html, /Patrick must approve this privacy text before it is published/);
-  assert.match(html, /api\.lemonsqueezy\.com/);
+  const listing = fs.readFileSync(path.join(rootDir, 'extension/store-listing-draft.md'), 'utf8');
+  for (const text of [html, listing]) {
+    assert.doesNotMatch(text, /lemon/i);
+    assert.doesNotMatch(text, /thamsdimon/i);
+    assert.match(text, /Stripe/);
+    assert.match(text, /ptd\.fullstack@gmail\.com/);
+  }
+  assert.match(html, /DRAFT: Patrick must approve this privacy text before it is published/);
+  assert.match(html, /Udkast, ikke godkendt/);
+  assert.match(html, /Draft, not approved for publication/);
   assert.match(html, /merchant of record/i);
-  assert.match(html, /customer/i);
-  assert.doesNotMatch(html, /foretager ingen netværkskald/);
-  assert.doesNotMatch(html, /makes no network requests/);
-  assert.match(html, /Microsoft Edge/);
-  assert.match(html, /50/);
-  assert.match(html, /30/);
+  assert.match(html, /Cloudflare/);
+  assert.match(html, /tabmoor-unlock\.tabmoor\.workers\.dev/);
+  assert.match(html, /Patrick, based in Denmark/);
+  assert.match(html, /Patrick, bosat i Danmark/);
+  assert.match(html, /No home address/);
+  assert.match(html, /about 1 hour|ca\. 1 time/);
+  assert.match(listing, /Payment is handled by Stripe|Betaling klares af Stripe/);
 });

@@ -4,6 +4,7 @@
   "short_name": "Tabmoor",
   "description": "__MSG_extDescription__",
   "version": "0.3.0",
+  "minimum_chrome_version": "113",
   "default_locale": "en",
   "icons": {
     "16": "icons/icon16.png",
@@ -36,8 +37,5 @@
       },
       "description": "__MSG_cmdSave__"
     }
-  },
-  "optional_host_permissions": [
-    "https://api.lemonsqueezy.com/*"
-  ]
+  }
 }

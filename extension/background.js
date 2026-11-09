@@ -1,5 +1,8 @@
 /* Tabmoor background: rolling backups. Chrome loads core.js via importScripts, Firefox via manifest scripts. */
-if (typeof TS === 'undefined' && typeof importScripts === 'function') importScripts('core.js');
+if (typeof importScripts === 'function') {
+  if (typeof TS === 'undefined') importScripts('core.js');
+  if (typeof TSUnlock === 'undefined') importScripts('pro-key.js', 'unlock.js');
+}
 const api = TS.api;
 const ALARM = 'tabmoor-backup';
 let liveTimer = null;

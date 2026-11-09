@@ -176,13 +176,20 @@ export function loadTabmoor(fake, opts) {
     },
   };
   vm.createContext(context);
+  context.atob = atob;
+  context.btoa = btoa;
+  context.TextEncoder = TextEncoder;
+  context.TextDecoder = TextDecoder;
+  context.crypto = globalThis.crypto;
   if (firefox) {
     fake.api.runtime.getBrowserInfo = async () => ({ name: 'Firefox', version: '140.0' });
     context.browser = fake.api;
   }
   context.chrome = fake.api;
   const dir = path.join(root, 'extension');
-  for (const file of ['license-config.js', 'core.js', 'license.js', 'i18n.js']) {
+  const files = ['core.js', 'i18n.js'];
+  if (opts.unlock) files.push('pro-key.js', 'unlock.js');
+  for (const file of files) {
     vm.runInContext(fs.readFileSync(path.join(dir, file), 'utf8'), context, { filename: file });
   }
   return context;

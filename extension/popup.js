@@ -13,9 +13,9 @@
   let pendingDeactivate = false;
   let proBusy = false;
   let proMessage = '';
-  let licenseDraft = '';
+  let unlockDraft = '';
   let isPro = false;
-  let knownLicense = null;
+  let proCounts = { used: null, max: null };
   let folderFilter = '';
   let tagFilter = '';
   const expanded = new Set();
@@ -49,38 +49,51 @@
     return bits.join(' · ');
   }
 
-  function licMessage(reason) {
-    if (reason === 'permission') return T.licPermission;
-    if (reason === 'network') return T.licNetwork;
-    if (reason === 'product') return T.licProduct;
-    if (reason === 'config') return T.licConfig;
-    return T.licInvalid;
+  function isFirefoxBrowser() {
+    try { return /Firefox/i.test(navigator.userAgent || ''); } catch (e) { return false; }
   }
-
+  function proTitle() {
+    if (!isPro) return T.pro;
+    if (Number.isFinite(proCounts.used) && Number.isFinite(proCounts.max)) return T.proStatus(proCounts.used, proCounts.max);
+    return T.proStatusPlain;
+  }
+  function unlockMessage(reason) {
+    if (reason === 'empty') return T.codeEmpty;
+    return typeof T['err_' + reason] === 'string' ? T['err_' + reason] : T.err_network;
+  }
+  function requestFirefoxConsent() {
+    if (!isFirefoxBrowser()) return Promise.resolve({ ok: true });
+    const permissions = api.permissions;
+    if (!permissions || typeof permissions.request !== 'function') return Promise.resolve({ ok: true });
+    try {
+      return Promise.resolve(permissions.request({ data_collection: ['authenticationInfo'] })).then(
+        ok => ok ? { ok: true } : { ok: false, reason: 'permission' },
+        () => ({ ok: false, reason: 'permission' })
+      );
+    } catch (e) { return Promise.resolve({ ok: false, reason: 'permission' }); }
+  }
   function renderProBox() {
     const box = $('proBox');
-    const kids = [el('strong', null, isPro ? T.proActive : T.pro)];
-    if (!isPro) kids.push(el('p', { class: 'muted' }, T.proPrice));
-    kids.push(el('ul', null, ...T.proItems.map(s => el('li', null, s))));
+    const kids = [el('strong', null, proTitle()), el('ul', null, ...T.proItems.map(s => el('li', null, s)))];
     if (isPro) {
       const btn = el('button', { type: 'button', class: 'danger', 'data-act': 'deactivate' }, proBusy ? T.deactivating : (pendingDeactivate ? T.confirmDeactivate : T.deactivate));
       if (proBusy) btn.disabled = true;
       kids.push(btn);
     } else {
-      const url = (globalThis.TSLicense && TSLicense.checkoutUrl) ? TSLicense.checkoutUrl() : '';
-      if (url) kids.push(el('p', null, el('a', { href: url, target: '_blank', rel: 'noopener noreferrer', referrerpolicy: 'no-referrer' }, T.proBuy)));
-      else kids.push(el('p', { class: 'muted' }, T.proBuyMissing));
-      const input = el('input', { id: 'licenseKey', type: 'text', maxlength: '200', autocomplete: 'off', spellcheck: 'false' });
-      input.placeholder = T.licensePh;
-      input.value = licenseDraft;
-      input.addEventListener('input', () => { licenseDraft = input.value; });
-      input.addEventListener('keydown', e => { if (e.key === 'Enter') onActivate(); });
+      kids.push(el('p', { class: 'muted' }, T.proPrice));
+      kids.push(el('button', { type: 'button', class: 'primary', 'data-act': 'buy' }, T.proBuy));
+      const input = el('input', { id: 'unlockCode', type: 'text', maxlength: '80', autocomplete: 'off', spellcheck: 'false' });
+      input.placeholder = T.codePh;
+      input.value = unlockDraft;
+      input.addEventListener('input', () => { unlockDraft = input.value; });
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') onUnlock(); });
       kids.push(input);
-      const btn = el('button', { type: 'button', class: 'primary', 'data-act': 'activate' }, proBusy ? T.activating : T.activate);
+      const btn = el('button', { type: 'button', 'data-act': 'unlock' }, proBusy ? T.unlocking : T.unlock);
       if (proBusy) btn.disabled = true;
       kids.push(btn);
     }
     if (proMessage) kids.push(el('p', { class: 'proStatus', role: 'status' }, proMessage));
+    kids.push(el('p', { class: 'muted' }, T.support));
     box.replaceChildren(...kids);
   }
 
@@ -100,7 +113,7 @@
   }
 
   async function doRestore(windows) {
-    const pro = !!(await TS.getSettings()).pro;
+    const pro = await TS.isPro();
     const r = await TS.restore(windows, { lazy: pro });
     toast(T.restored(r.tabs, r.failed));
   }
@@ -217,7 +230,7 @@
   async function renderBackups() {
     const backups = await TS.listBackups();
     const lim = await TS.limits();
-    const pro = !!(await TS.getSettings()).pro;
+    const pro = await TS.isPro();
     $('keep').textContent = pro ? T.keepPro(lim.backups) : T.keep(lim.backups);
     const ul = $('backupList');
     if (!backups.length) return ul.replaceChildren(el('li', { class: 'empty' }, T.noBackups));
@@ -242,18 +255,21 @@
     }));
   }
 
+  async function refreshPro() {
+    if (typeof TSUnlock !== 'undefined' && TSUnlock.status) {
+      const st = await TSUnlock.status();
+      isPro = !!st.pro;
+      proCounts = { used: st.installsUsed, max: st.installsMax };
+    } else isPro = await TS.isPro();
+  }
   async function loadFlags() {
     const s = await TS.getSettings();
-    isPro = !!s.pro;
-    const { license } = await api.storage.local.get('license');
-    knownLicense = license && license.key && license.instanceId
-      ? { key: license.key, instanceId: license.instanceId }
-      : null;
+    await refreshPro();
     return s;
   }
 
   async function render() {
-    isPro = !!(await TS.getSettings()).pro;
+    await refreshPro();
     $('filters').hidden = !isPro;
     $('paneSessions').hidden = view !== 'sessions';
     $('paneBackups').hidden = view !== 'backups';
@@ -265,49 +281,44 @@
     if (view === 'backups') await renderBackups();
   }
 
-  async function onActivate() {
+  function onBuy() { api.tabs.create({ url: TABMOOR_UNLOCK.BUY_URL }); }
+
+  async function onUnlock() {
     if (proBusy) return;
-    const input = $('licenseKey');
-    const raw = input ? input.value : licenseDraft;
-    licenseDraft = raw;
-    if (!String(raw || '').trim()) { proMessage = T.licEmpty; renderProBox(); return; }
-    // Chrome and Firefox close the popup when the permission dialog opens, so the
-    // request has to run from the stable tab. Same reason the file import does.
-    if (!isPage) {
+    const input = $('unlockCode');
+    const raw = input ? input.value : unlockDraft;
+    unlockDraft = raw;
+    if (!String(raw || '').trim()) { proMessage = T.codeEmpty; renderProBox(); return; }
+    if (!isPage && isFirefoxBrowser()) {
       try {
-        if (api.storage.session) await api.storage.session.set({ licenseDraft: String(raw).trim() });
+        if (api.storage.session) await api.storage.session.set({ unlockDraft: String(raw).trim() });
         await api.tabs.create({ url: api.runtime.getURL('popup.html?page=1&pro=1') });
-      } catch (e) {
-        proMessage = T.licNetwork;
-        renderProBox();
-        return;
-      }
+      } catch (e) { proMessage = T.err_network; renderProBox(); return; }
       window.close();
       return;
     }
     proBusy = true;
     proMessage = '';
-    const btn = document.querySelector('[data-act="activate"]');
+    const btn = document.querySelector('[data-act="unlock"]');
     if (btn) btn.disabled = true;
     try {
-      const res = await TSLicense.activate(String(raw).trim());
-      await loadFlags();
-      if (res.ok) { licenseDraft = ''; pendingDeactivate = false; proMessage = T.activatedOk; toast(T.activatedOk); }
-      else proMessage = licMessage(res.reason);
-    } catch (e) {
-      proMessage = T.licNetwork;
-    } finally {
-      proBusy = false;
-      renderProBox();
-      render();
-    }
+      const consent = await requestFirefoxConsent();
+      if (!consent.ok) proMessage = unlockMessage(consent.reason);
+      else {
+        const res = await TSUnlock.redeem(String(raw).trim());
+        await loadFlags();
+        if (res.ok) { unlockDraft = ''; pendingDeactivate = false; proMessage = ''; toast(T.activatedOk); }
+        else proMessage = unlockMessage(res.reason);
+      }
+    } catch (e) { proMessage = T.err_network; }
+    finally { proBusy = false; renderProBox(); render(); }
   }
 
   async function onDeactivate() {
     if (proBusy) return;
-    if (!isPage) {
+    if (!isPage && isFirefoxBrowser()) {
       try { await api.tabs.create({ url: api.runtime.getURL('popup.html?page=1&pro=deactivate') }); }
-      catch (e) { proMessage = T.licNetwork; renderProBox(); return; }
+      catch (e) { proMessage = T.err_network; renderProBox(); return; }
       window.close();
       return;
     }
@@ -315,19 +326,17 @@
     pendingDeactivate = false;
     proBusy = true;
     proMessage = '';
-    // Permission request starts inside deactivate, before any await, while this click is active.
     try {
-      const res = await TSLicense.deactivate({ knownLicense });
-      await loadFlags();
-      proMessage = res.ok ? T.deactivatedOk : licMessage(res.reason);
-      if (res.ok) toast(T.deactivatedOk);
-    } catch (e) {
-      proMessage = T.licNetwork;
-    } finally {
-      proBusy = false;
-      renderProBox();
-      render();
-    }
+      const consent = await requestFirefoxConsent();
+      if (!consent.ok) proMessage = unlockMessage(consent.reason);
+      else {
+        const res = await TSUnlock.release();
+        await loadFlags();
+        proMessage = res.ok ? T.deactivatedOk : unlockMessage(res.reason);
+        if (res.ok) toast(T.deactivatedOk);
+      }
+    } catch (e) { proMessage = T.err_network; }
+    finally { proBusy = false; renderProBox(); render(); }
   }
 
   async function save(windowOnly) {
@@ -371,15 +380,14 @@
     T = TSI18N.STR[lang];
     if (isPage && pageParams.get('pro') === '1' && api.storage.session) {
       view = 'settings';
-      const got = await api.storage.session.get('licenseDraft');
-      if (got && got.licenseDraft) {
-        licenseDraft = String(got.licenseDraft);
-        if (api.storage.session.remove) await api.storage.session.remove('licenseDraft');
+      const got = await api.storage.session.get('unlockDraft');
+      if (got && got.unlockDraft) {
+        unlockDraft = String(got.unlockDraft);
+        if (api.storage.session.remove) await api.storage.session.remove('unlockDraft');
       }
-      proMessage = T.licAgain;
+      if (isFirefoxBrowser()) proMessage = T.unlockAgain;
     } else if (isPage && pageParams.get('pro') === 'deactivate') {
       view = 'settings';
-      proMessage = T.deactivateHere;
     }
     $('lang').value = s.lang;
     $('interval').value = String(s.intervalMin);
@@ -394,7 +402,8 @@
     $('proBox').addEventListener('click', e => {
       const btn = e.target.closest('button');
       if (!btn) return;
-      if (btn.dataset.act === 'activate') onActivate();
+      if (btn.dataset.act === 'buy') onBuy();
+      if (btn.dataset.act === 'unlock') onUnlock();
       if (btn.dataset.act === 'deactivate') onDeactivate();
     });
     $('tabSessions').addEventListener('click', () => { view = 'sessions'; render(); });
@@ -420,7 +429,7 @@
     $('openTab').addEventListener('click', () => { api.tabs.create({ url: api.runtime.getURL('popup.html?page=1') }); window.close(); });
     api.storage.onChanged.addListener((c, area) => {
       if (area !== 'local') return;
-      if (c.settings || c.license) loadFlags().then(() => { renderProBox(); render(); });
+      if (c.settings || c.proUnlock || c.installId) loadFlags().then(() => { renderProBox(); render(); });
       else if (c.sessions || c.backups) render();
     });
     render();

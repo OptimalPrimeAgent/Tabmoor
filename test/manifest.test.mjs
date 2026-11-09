@@ -7,53 +7,38 @@ import test from 'node:test';
 import { rootDir } from './harness.mjs';
 
 const ext = path.join(rootDir, 'extension');
+const read = name => fs.readFileSync(path.join(ext, name), 'utf8');
 
-function read(name) {
-  return fs.readFileSync(path.join(ext, name), 'utf8');
-}
-
-test('manifests are 0.3.0, optional Lemon host only, Firefox id unchanged', () => {
+test('manifests are 0.3.0 with no host permission and Chrome 113 for Ed25519', () => {
   const chrome = JSON.parse(read('manifest.json'));
   const firefox = JSON.parse(read('manifest.firefox.json'));
   assert.equal(chrome.version, '0.3.0');
   assert.equal(firefox.version, '0.3.0');
-  assert.deepEqual(chrome.optional_host_permissions, ['https://api.lemonsqueezy.com/*']);
-  assert.deepEqual(firefox.optional_host_permissions, ['https://api.lemonsqueezy.com/*']);
+  assert.equal(chrome.minimum_chrome_version, '113');
   assert.equal(chrome.host_permissions, undefined);
+  assert.equal(chrome.optional_host_permissions, undefined);
   assert.equal(firefox.host_permissions, undefined);
-  assert.equal(chrome.browser_specific_settings, undefined);
+  assert.equal(firefox.optional_host_permissions, undefined);
   assert.equal(firefox.browser_specific_settings.gecko.id, '{a476f9a3-31f4-4ef0-821a-3a3075f4a2f2}');
-  assert.equal(firefox.browser_specific_settings.gecko.strict_min_version, '140.0');
-  assert.deepEqual(firefox.browser_specific_settings.gecko.data_collection_permissions, {
-    required: ['none'],
-    optional: ['authenticationInfo'],
-  });
-  assert.deepEqual(firefox.background.scripts, ['core.js', 'background.js']);
-  assert.equal(chrome.background.service_worker, 'background.js');
+  assert.deepEqual(firefox.browser_specific_settings.gecko.data_collection_permissions, { required: ['none'], optional: ['authenticationInfo'] });
+  assert.deepEqual(firefox.background.scripts, ['core.js', 'pro-key.js', 'unlock.js', 'background.js']);
+  assert.deepEqual(chrome.permissions, ['tabs', 'tabGroups', 'storage', 'unlimitedStorage', 'alarms']);
 });
 
-test('network calls live only in the license module and never validate', () => {
-  const quiet = ['core.js', 'background.js', 'popup.js', 'i18n.js', 'license-config.js'];
-  for (const name of quiet) {
+test('network calls are only redeem and release, with no Lemon Squeezy left', () => {
+  for (const name of fs.readdirSync(ext)) {
+    if (!/\.(js|html|json|md)$/.test(name)) continue;
     const src = read(name);
-    assert.doesNotMatch(src, /fetch\s*\(/);
-    assert.doesNotMatch(src, /XMLHttpRequest/);
-    assert.doesNotMatch(src, /WebSocket/);
-    assert.doesNotMatch(src, /sendBeacon/);
+    assert.doesNotMatch(src, /lemon/i, name);
+    assert.doesNotMatch(src, /thamsdimon/i, name);
   }
-  const license = read('license.js');
-  assert.match(license, /ACTIVATE_URL/);
-  assert.match(license, /DEACTIVATE_URL/);
-  assert.doesNotMatch(license, /licenses\/validate/);
-  assert.doesNotMatch(license, /customer_email/);
-  assert.doesNotMatch(license, /customer_name/);
-  const config = read('license-config.js');
-  assert.match(config, /https:\/\/api\.lemonsqueezy\.com\/v1\/licenses\/activate/);
-  assert.match(config, /https:\/\/api\.lemonsqueezy\.com\/v1\/licenses\/deactivate/);
-  assert.doesNotMatch(config, /licenses\/validate/);
-  assert.match(config, /const LEMON_STORE_ID = 'LEMON_STORE_ID'/);
-  assert.match(config, /const LEMON_PRODUCT_ID = 'LEMON_PRODUCT_ID'/);
-  assert.match(config, /const LEMON_CHECKOUT_URL = ''/);
+  for (const name of ['core.js', 'background.js', 'popup.js', 'i18n.js', 'pro-key.js']) {
+    assert.doesNotMatch(read(name), /fetch\s*\(/, name);
+  }
+  assert.match(read('unlock.js'), /mode: 'cors'/);
+  assert.match(read('pro-key.js'), /https:\/\/tabmoor-unlock\.tabmoor\.workers\.dev\/redeem/);
+  assert.match(read('pro-key.js'), /https:\/\/tabmoor-unlock\.tabmoor\.workers\.dev\/release/);
+  assert.match(read('pro-key.js'), /https:\/\/buy\.stripe\.com\/fZu9AV0JDaBy6aG1v118c00/);
 });
 
 test('build emits chrome, firefox and edge packages without the listing draft', () => {
@@ -66,8 +51,7 @@ test('build emits chrome, firefox and edge packages without the listing draft', 
   execFileSync('unzip', ['-q', path.join(dist, 'tabmoor-firefox-0.3.0.zip'), '-d', tmp]);
   const manifest = JSON.parse(fs.readFileSync(path.join(tmp, 'manifest.json'), 'utf8'));
   assert.equal(manifest.version, '0.3.0');
-  assert.equal(manifest.browser_specific_settings.gecko.id, '{a476f9a3-31f4-4ef0-821a-3a3075f4a2f2}');
-  assert.equal(fs.existsSync(path.join(tmp, 'manifest.firefox.json')), false);
-  assert.equal(fs.existsSync(path.join(tmp, 'store-listing-draft.md')), false);
-  assert.equal(fs.existsSync(path.join(tmp, 'license-config.js')), true);
+  assert.equal(manifest.optional_host_permissions, undefined);
+  assert.equal(fs.existsSync(path.join(tmp, 'unlock.js')), true);
+  assert.equal(fs.existsSync(path.join(tmp, 'license.js')), false);
 });
