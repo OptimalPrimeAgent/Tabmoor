@@ -1,0 +1,59 @@
+{
+  "manifest_version": 3,
+  "name": "__MSG_extName__",
+  "short_name": "Tabmoor",
+  "description": "__MSG_extDescription__",
+  "version": "0.3.0",
+  "default_locale": "en",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "__MSG_extName__",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "background": {
+    "scripts": [
+      "core.js",
+      "pro-key.js",
+      "unlock.js",
+      "background.js"
+    ]
+  },
+  "permissions": [
+    "tabs",
+    "tabGroups",
+    "storage",
+    "unlimitedStorage",
+    "alarms"
+  ],
+  "commands": {
+    "save-session": {
+      "suggested_key": {
+        "default": "Alt+Shift+S"
+      },
+      "description": "__MSG_cmdSave__"
+    }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{a476f9a3-31f4-4ef0-821a-3a3075f4a2f2}",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ],
+        "optional": [
+          "authenticationInfo"
+        ]
+      }
+    }
+  }
+}

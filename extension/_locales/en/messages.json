@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "Tabmoor: Session Saver & Auto Backup"
+  },
+  "extDescription": {
+    "message": "Save all open tabs as named sessions, restore them with one click and get automatic local backups. No tracking."
+  },
+  "cmdSave": {
+    "message": "Save all windows as a session"
+  }
+}
