@@ -1,6 +1,5 @@
-# Tabmoor 0.3.0 store text (DRAFT)
+# Tabmoor 0.3.0 store text
 
-Patrick must approve this before any store submission. Do not publish it as-is.
 Support contact: ptd.fullstack@gmail.com
 
 ## What changed in the listing
