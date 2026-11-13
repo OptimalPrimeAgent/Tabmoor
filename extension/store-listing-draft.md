@@ -22,7 +22,7 @@ Tabmoor Pro is a one-time purchase of 99 DKK incl. VAT (lifetime, up to 3 browse
 
 Privatliv først: faner og sessioner bliver på din computer. Tabmoor foretager ingen netværkskald, undtagen når du låser Pro op eller deaktiverer det på denne browser. Ingen annoncer, ingen sporing og ingen konto. Private vinduer gemmes aldrig.
 
-Tabmoor Pro er et engangskøb på 99 kr. inkl. moms (livstid, op til 3 browsere). Det giver 50 rullende automatiske backups, mærker og mapper, gendannelse hvor faner først indlæses ved klik, og én backup pr. dag i 30 dage. Betaling klares af Stripe. Efter kassen får du en oplåsningskode. Åbn Tabmoor, vælg Pro, og indsæt koden. Den virker på op til 3 browsere. Support: ptd.fullstack@gmail.com
+Tabmoor Pro er et engangskøb på 99 kr. inkl. moms (livstid, op til 3 browsere). Det giver 50 rullende automatiske backups, mærker og mapper, faner, der først indlæses, når du klikker på dem, og én backup pr. dag i 30 dage. Betaling klares af Stripe. Når du har betalt, får du en oplåsningskode. Åbn Tabmoor, vælg Pro, og indsæt koden. Den virker på op til 3 browsere. Support: ptd.fullstack@gmail.com
 
 ## Before submission (not done here)
 
