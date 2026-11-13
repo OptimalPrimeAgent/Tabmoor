@@ -13,9 +13,9 @@ test('privacy draft describes Stripe and the Cloudflare unlock server', () => {
     assert.match(text, /Stripe/);
     assert.match(text, /ptd\.fullstack@gmail\.com/);
   }
-  assert.match(html, /DRAFT: Patrick must approve this privacy text before it is published/);
-  assert.match(html, /Udkast, ikke godkendt/);
-  assert.match(html, /Draft, not approved for publication/);
+  assert.doesNotMatch(html, /DRAFT/);
+  assert.doesNotMatch(html, /Udkast, ikke godkendt/);
+  assert.doesNotMatch(html, /Draft, not approved for publication/);
   assert.match(html, /merchant of record/i);
   assert.match(html, /Cloudflare/);
   assert.match(html, /tabmoor-unlock\.tabmoor\.workers\.dev/);
